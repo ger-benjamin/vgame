@@ -1,0 +1,31 @@
+Crafty.init(720, 720, document.getElementById('game'));
+
+//Crafty.e('2D, DOM, Color').attr({x: 0, y: 0, w: 100, h: 100}).color('#F00');
+
+Crafty.e('UpperLeftZone, 2D, Canvas, Color')
+  .attr({x: 0, y: 0, w: 150, h: 360})
+  .color('#CCCCAA');
+  
+Crafty.e('BottomLeftZone, 2D, Canvas, Color')
+  .attr({x: 0, y: 360, w: 150, h: 360})
+  .color('#AACCCC');
+  
+Crafty.e('RightZone, 2D, Canvas, Color')
+  .attr({x: 570, y: 0, w: 150, h: 720})
+  .color('#CCAACC');
+
+Crafty.e('Floor, 2D, Canvas, Color')
+  .attr({x: 150, y: 690, w: 420, h: 30})
+  .color('#444422');
+
+Crafty.e('Vigneron, 2D, Canvas, Color, Multiway, Gravity')
+  .attr({x: 150, y: 690, w: 180, h: 180})
+  .color('#F00')
+  .multiway(4.5, {RIGHT_ARROW: 0, LEFT_ARROW: 180})
+  .gravity('Floor');
+  
+Crafty.e("2D, Collision")
+    .checkHits('Floor') // check for collisions with entities that have the Solid component in each frame
+    .bind("HitOn", function(hitData) {
+        console.log("Collision with Solid entity occurred for the first time.");
+    });
