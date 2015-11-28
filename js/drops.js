@@ -43,9 +43,11 @@ Crafty.c('Drop', {
 });
 
 Game.prototype.nextDrop = function() {
-    while (game._nextDrops.length < 6) {
+    while (game._nextDrops.length <= game.MAX_DROPS_KNOW) {
         var drop = Crafty.e('Drop');
         game._nextDrops.push(drop);
     }
-    return game._nextDrops.shift();
+    var generatedDrop = game._nextDrops.shift();
+    Crafty.trigger('DropGenerated', generatedDrop);
+    return generatedDrop;
 };

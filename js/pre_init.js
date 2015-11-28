@@ -17,6 +17,7 @@ var Game = function game() {
     this.FLOOR_HEIGHT = fitSize(1);
     this.DROP_SIZE = fitSize(1);
     this.COLUMNS = 7;
+    this.MAX_DROPS_KNOW = 5;
     this.TICK = 1000; //ms
     this.INCREMENT_TICK = 50; //ms
     this.MAX_SPEED = 40;

@@ -20,6 +20,11 @@ Crafty.e('BasketL, Basket, Canvas, Color')
 
 Crafty.e('BasketR, Basket, Canvas, Color')
     .color('#AAFF00');
+
+game.nextDrop();
+
+Crafty.e('DropViewerBox');
+
 //go
 Crafty.e().bind("EnterFrame", function(e) {
     if (e.frame % 100 == 0) {
