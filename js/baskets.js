@@ -16,14 +16,25 @@ Crafty.c('Basket', {
            w: game.BASKET_SIZE,
            h: game.BASKET_SIZE
         });
-        this.x = this._getFixPosition(this._position);
+        this.x = this._getFixPositions()[this._position];
         this.multiway(2, {RIGHT_ARROW: 0, LEFT_ARROW: 180}); //FIXME _speed
         this.bind('Moved', function(position) {
-            if (!this._switching) {
-                this.x = this._getFixPosition(this._position);
+            var positionLimit = this._getFixPositions();
+            var isTooLeft = positionLimit['left'] <= game.ZONE_WIDTH;
+            var isTooRight = positionLimit['right'] >= game.WIDTH -
+                game.ZONE_WIDTH - game.BASKET_SIZE;
+            if (Object.keys(this._keyDirection).length > 1) {
+                if (isTooLeft) {
+                    this.multiway(2, {RIGHT_ARROW: 0});
+                }
+                else if (isTooRight) {
+                    this.multiway(2, {LEFT_ARROW: 180});
+                }
+            } else if (!isTooLeft && !isTooRight){
+                this.multiway(2, {RIGHT_ARROW: 0, LEFT_ARROW: 180});
             }
         });
-        this.checkHits('Drop')
+        this.checkHits('Drop');
         this.bind('HitOn', function(hits) {
             var drop = hits[0].obj;
             this.addDrop(drop);
@@ -47,27 +58,30 @@ Crafty.c('Basket', {
             this.color('#FFFF00');
         }
     },
+    isSwitching: function() {
+      return this._switching;
+    },
     switchPosition: function() {
-        if (!this._switching) {
-            this._switching = true;
-            (this._position === 'left') ? this._toRight() : this._toLeft();
-        }
+        this._switching = true;
+        (this._position === 'left') ? this._toRight() : this._toLeft();
     },
     _toRight: function() {
         var base_y = this.y;
-        var x = (this._getFixPosition('left') - this._getFixPosition('right'));
+        var fixedPositions = this._getFixPositions();
+        var x = (fixedPositions['left'] - fixedPositions['right']);
         x = x / 2;
         var y = 0;
 
         var movement = function(e) {
             if (e.frame % 2 == 0) {
+                var positionLimit = this._getFixPositions()['right'];
                 x += 8;
                 y = -0.25 * x^2;
                 this.x +=8;
                 this.y -= y;
-                if (this.x >= this._getFixPosition('right')) {
+                if (this.x >= positionLimit) {
                     this.y = base_y;
-                    this.x = this._getFixPosition('right');
+                    this.x = positionLimit;
                     this._position = 'right';
                     this._switching = false;
                     this.unbind('EnterFrame', movement);
@@ -79,18 +93,20 @@ Crafty.c('Basket', {
     },
     _toLeft: function() {
         var base_y = this.y;
-        var x = (this._getFixPosition('left') - this._getFixPosition('right'));
+        var fixedPositions = this._getFixPositions();
+        var x = (fixedPositions['left'] - fixedPositions['right']);
         x = x / 2;
         var y = 0;
 
         var movement = function(e) {
+            var positionLimit = this._getFixPositions()['left'];
             x += 3;
             y = -0.25 * x^2;
             this.x -=3;
             this.y -= y;
-            if (this.x <= this._getFixPosition('left')) {
+            if (this.x <= positionLimit) {
                 this.y = base_y;
-                this.x = this._getFixPosition('left');
+                this.x = positionLimit;
                 this._position = 'left';
                 this._switching = false;
                 this.unbind('EnterFrame', movement);
@@ -99,10 +115,10 @@ Crafty.c('Basket', {
 
         this.bind("EnterFrame", movement);
     },
-    _getFixPosition: function(side) {
-        if (side === 'left') {
-            return Crafty('Vigneron').x;
-        }
-        return Crafty('Vigneron').x + game.VIGNERON_SIZE - game.BASKET_SIZE;
+    _getFixPositions: function() {
+        return {
+            'left': Crafty('Vigneron').x,
+            'right': Crafty('Vigneron').x + game.VIGNERON_SIZE - game.BASKET_SIZE
+        };
     }
 });

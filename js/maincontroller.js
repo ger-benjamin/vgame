@@ -2,8 +2,12 @@
 //Other controls
 Crafty.e('Keyboard').bind("KeyUp", function(e) {
     if (e.keyCode === Crafty.keys.UP_ARROW) {
-        Crafty('BasketR').switchPosition();
-        Crafty('BasketL').switchPosition();
+        var basketR = Crafty('BasketR');
+        var basketL = Crafty('BasketL');
+        if (!basketR.isSwitching() && !basketL.isSwitching()) {
+          basketR.switchPosition();
+          basketL.switchPosition();
+        }
     }
 });
 
